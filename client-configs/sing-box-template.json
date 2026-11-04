@@ -1,0 +1,80 @@
+{
+  "log": {
+    "level": "info"
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "remote-dns",
+        "address": "https://1.1.1.1/dns-query",
+        "detour": "wireguard-out"
+      },
+      {
+        "tag": "local-dns",
+        "address": "local",
+        "detour": "direct-out"
+      }
+    ],
+    "rules": [
+      {
+        "rule_set": "geosite-tiktok",
+        "server": "remote-dns"
+      }
+    ],
+    "strategy": "prefer_ipv4"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "inet4_address": "172.19.0.1/30",
+      "auto_route": true,
+      "strict_route": false,
+      "sniff": true,
+      "sniff_override_destination": true
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "direct",
+      "tag": "direct-out"
+    },
+    {
+      "type": "wireguard",
+      "tag": "wireguard-out",
+      "server": "vpn.example.com",
+      "server_port": 51820,
+      "local_address": [
+        "10.8.0.2/32"
+      ],
+      "private_key": "CLIENT_PRIVATE_KEY_HERE",
+      "peer_public_key": "SERVER_PUBLIC_KEY_HERE",
+      "mtu": 1420
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "rule_set": "geosite-tiktok",
+        "outbound": "wireguard-out"
+      },
+      {
+        "outbound": "direct-out"
+      }
+    ],
+    "rule_set": [
+      {
+        "tag": "geosite-tiktok",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-tiktok.srs",
+        "download_detour": "direct-out"
+      }
+    ],
+    "auto_detect_interface": true
+  }
+}

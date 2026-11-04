@@ -1,0 +1,20 @@
+# Environment variables and secrets
+.env
+*.env
+!.env.example
+
+# WireGuard keys, configs and data
+*.conf
+*.key
+*.csr
+*.crt
+db/
+wireguard/
+data/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
