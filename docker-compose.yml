@@ -16,7 +16,7 @@ services:
       - ./data:/etc/wireguard
     ports:
       - "${WG_PORT:-51820}:51820/udp"
-      - "127.0.0.1:${UI_PORT:-51821}:${UI_PORT:-51821}/tcp"
+      - "${UI_PORT:-51821}:${UI_PORT:-51821}/tcp"
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
