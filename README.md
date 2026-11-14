@@ -1,6 +1,6 @@
-# TikTok Smart-Routing VPN (Split Tunneling via WireGuard & Sing-box)
+# Team WireGuard VPN
 
-A self-hosted, lightweight VPN solution designed for selective traffic routing. It routes traffic for **TikTok** through a remote US/dedicated server endpoint while keeping all other everyday Internet traffic local (direct connection).
+A self-hosted, lightweight **WireGuard** VPN solution (`wg-easy` in Docker) with optional split tunneling and per-client bandwidth limiting.
 
 ## 🚀 Key Advantages
 
@@ -34,8 +34,8 @@ A self-hosted, lightweight VPN solution designed for selective traffic routing. 
 ### 2. Setup
 1. Clone this repository on the server:
    ```bash
-   git clone https://github.com/nadtoka/tiktok-bypass-vpn.git
-   cd tiktok-bypass-vpn
+   git clone https://github.com/nadtoka/team-wireguard-vpn.git
+   cd team-wireguard-vpn
    ```
 
 2. Copy the environment template:
@@ -85,3 +85,20 @@ A self-hosted, lightweight VPN solution designed for selective traffic routing. 
 - All `.env`, keys, credentials, and configuration files are excluded via `.gitignore`.
 - Web management panel is not exposed to the public Internet.
 - No corporate hostnames or internal IP addresses are committed to this repository.
+
+---
+
+## 🚦 Bandwidth Limiting (Traffic Shaping)
+
+Use `scripts/apply-tc-limits.sh` to enforce symmetric bandwidth limits inside the `wg-easy` container (`wg0` + `ifb0`):
+- **Total WireGuard cap:** `100mbit` (configurable via `TOTAL_RATE`)
+- **Per-client cap:** `10mbit` symmetric (configurable via `PER_CLIENT_RATE`)
+
+```bash
+./scripts/apply-tc-limits.sh
+```
+
+To automatically apply limits to newly added clients, run it via cron (e.g. every 5 minutes):
+```cron
+*/5 * * * * /path/to/team-wireguard-vpn/scripts/apply-tc-limits.sh >/dev/null 2>&1
+```
